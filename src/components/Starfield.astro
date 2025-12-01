@@ -1,0 +1,195 @@
+---
+---
+
+<div id="starfield" class="fixed inset-0 overflow-hidden pointer-events-none" style="z-index: 1;"></div>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    const starfield = document.getElementById("starfield");
+    const numStars = 100;
+
+    // Create static stars
+    for (let i = 0; i < numStars; i++) {
+      const star = document.createElement("div");
+      
+      // Random position
+      const x = Math.random() * 100;
+      const y = Math.random() * 100;
+
+      // Small discrete stars (1-2px)
+      const size = Math.random() * 1 + 1;
+
+      // Random opacity (0.3-0.6 for subtle effect)
+      const opacity = Math.random() * 0.3 + 0.3;
+
+      // Random animation duration for twinkling (3-8 seconds)
+      const twinkleDuration = Math.random() * 5 + 3;
+
+      // Random animation delay
+      const twinkleDelay = Math.random() * 5;
+
+      // Random float animation (10-30 seconds for slow drift)
+      const floatDuration = Math.random() * 20 + 10;
+      const floatDelay = Math.random() * 5;
+
+      // Set inline styles directly
+      star.style.cssText = `
+        position: absolute;
+        left: ${x}%;
+        top: ${y}%;
+        width: ${size}px;
+        height: ${size}px;
+        background: white;
+        border-radius: 50%;
+        pointer-events: none;
+        box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+        z-index: 10;
+        opacity: ${opacity};
+        animation: twinkle ${twinkleDuration}s ease-in-out infinite ${twinkleDelay}s,
+                   float ${floatDuration}s ease-in-out infinite ${floatDelay}s;
+      `;
+
+      starfield?.appendChild(star);
+    }
+
+    // Shooting stars function
+    function createShootingStar() {
+      const shootingStar = document.createElement("div");
+      
+      // Random starting position from edge of screen
+      const edge = Math.floor(Math.random() * 4); // 0=top, 1=right, 2=bottom, 3=left
+      let startX, startY, angle;
+      
+      if (edge === 0) { // Top edge
+        startX = Math.random() * 100;
+        startY = -5;
+        angle = Math.random() * 90 + 45; // 45-135 degrees (downward)
+      } else if (edge === 1) { // Right edge
+        startX = 105;
+        startY = Math.random() * 100;
+        angle = Math.random() * 90 + 135; // 135-225 degrees (leftward)
+      } else if (edge === 2) { // Bottom edge
+        startX = Math.random() * 100;
+        startY = 105;
+        angle = Math.random() * 90 + 225; // 225-315 degrees (upward)
+      } else { // Left edge
+        startX = -5;
+        startY = Math.random() * 100;
+        angle = Math.random() * 90 - 45; // -45 to 45 degrees (rightward)
+      }
+      
+      const distance = Math.random() * 800 + 600; // 600-1400px travel (2x longer)
+      const duration = Math.random() * 1 + 1; // 1-2 seconds
+
+      // Calculate end position based on angle
+      const radians = (angle * Math.PI) / 180;
+      const endX = startX + (Math.cos(radians) * distance) / window.innerWidth * 100;
+      const endY = startY + (Math.sin(radians) * distance) / window.innerHeight * 100;
+
+      shootingStar.className = "shooting-star";
+      shootingStar.style.cssText = `
+        position: absolute;
+        left: ${startX}%;
+        top: ${startY}%;
+        width: 500px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8) 50%, white);
+        pointer-events: none;
+        z-index: 15;
+        transform: rotate(${angle}deg);
+        transform-origin: right center;
+        animation: shootingStar ${duration}s ease-out forwards;
+        --endX: ${endX}%;
+        --endY: ${endY}%;
+        --startX: ${startX}%;
+        --startY: ${startY}%;
+      `;
+      
+      starfield?.appendChild(shootingStar);
+      
+      // Remove after animation completes
+      setTimeout(() => {
+        shootingStar.remove();
+      }, duration * 1000);
+    }
+
+    // Schedule shooting stars at random intervals (3-8 seconds)
+    function scheduleNextShootingStar() {
+      const delay = Math.random() * 5000 + 3000; // 3000-8000ms (3-8 seconds)
+      setTimeout(() => {
+        createShootingStar();
+        scheduleNextShootingStar(); // Schedule the next one
+      }, delay);
+    }
+
+    // Start the shooting star cycle
+    scheduleNextShootingStar();
+  });
+</script>
+
+<style>
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 10px white, 0 0 20px white;
+    z-index: 2;
+    animation: twinkle var(--twinkle-duration) ease-in-out infinite
+        var(--twinkle-delay),
+      float var(--float-duration) ease-in-out infinite var(--float-delay);
+  }
+
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.4;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.2);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(3px, -3px);
+    }
+    50% {
+      transform: translate(-2px, 3px);
+    }
+    75% {
+      transform: translate(-3px, -2px);
+    }
+  }
+
+  @keyframes shootingStar {
+    0% {
+      opacity: 0;
+      left: var(--startX);
+      top: var(--startY);
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      left: var(--endX);
+      top: var(--endY);
+    }
+  }
+
+  .shooting-star {
+    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.6);
+    filter: blur(0.5px);
+  }
+</style>
+

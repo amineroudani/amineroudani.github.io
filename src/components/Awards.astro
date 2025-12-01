@@ -1,0 +1,43 @@
+---
+import { siteConfig } from "../config";
+---
+
+<section id="awards" class="p-8 sm:p-12 md:p-16 lg:p-24">
+  <div class="max-w-5xl mx-auto">
+    <h2
+      class="text-3xl sm:text-4xl md:text-5xl xl:text-7xl font-bold text-white text-center mb-8 lg:mb-12"
+    >
+      Awards
+    </h2>
+
+    <div class="space-y-8">
+      {
+        siteConfig.awards.map((award) => (
+          <div class="bg-neutral-900/70 backdrop-blur-md shadow-sm p-4 sm:p-5 md:p-6 hover:bg-neutral-900/80 hover:shadow-md transition-all duration-300">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-4">
+              {award.logo && (
+                <div class={award.logo.includes('Ecole_Polytechnique') ? 'bg-white p-1' : ''}>
+                  <img
+                    src={award.logo}
+                    alt={award.title}
+                    class={award.logo.includes('Ecole_Polytechnique') ? 'w-12 h-12 object-contain' : 'w-16 h-16 object-contain'}
+                  />
+                </div>
+              )}
+              <div class="flex-1">
+                <h3 class="text-lg sm:text-xl font-semibold text-white">
+                  {award.title}
+                </h3>
+                <span class="text-xs sm:text-sm text-gray-500 mt-2 sm:mt-0 block sm:inline">
+                  {award.date}
+                </span>
+              </div>
+            </div>
+            <p class="text-sm sm:text-base text-gray-400 leading-relaxed" set:html={award.description} />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
