@@ -6,6 +6,41 @@ const hasEducation = siteConfig.education && siteConfig.education.length > 0;
 {
   hasEducation && (
     <section id="education" class="p-8 sm:p-12 md:p-16 lg:p-24">
+      <svg style="position: absolute; width: 0; height: 0;">
+        <defs>
+          <filter id="liquid-glass-filter-education" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1.2 0 0 0 0  0 1.2 0 0 0  0 0 1.2 0 0  0 0 0 1 0"
+              result="bright"
+            />
+            <feComponentTransfer in="bright" result="saturate">
+              <feFuncR type="linear" slope="1.3" />
+              <feFuncG type="linear" slope="1.3" />
+              <feFuncB type="linear" slope="1.3" />
+            </feComponentTransfer>
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.02"
+              numOctaves="3"
+              result="noise"
+              seed="2"
+            />
+            <feDisplacementMap
+              in="saturate"
+              in2="noise"
+              scale="3"
+              xChannelSelector="R"
+              yChannelSelector="G"
+              result="displace"
+            />
+            <feBlend in="SourceGraphic" in2="displace" mode="normal" />
+          </filter>
+        </defs>
+      </svg>
+
       <div class="max-w-5xl mx-auto">
         <h2 class="text-3xl sm:text-4xl md:text-5xl xl:text-7xl font-bold text-white text-center mb-8 lg:mb-12">
           Education
@@ -13,42 +48,47 @@ const hasEducation = siteConfig.education && siteConfig.education.length > 0;
 
         <div class="space-y-8">
           {siteConfig.education.map((edu) => (
-            <div class="bg-neutral-900/70 backdrop-blur-md shadow-sm p-4 sm:p-5 md:p-6 hover:bg-neutral-900/80 hover:shadow-md transition-all duration-300">
-              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-4">
-                {edu.logo && (
-                  <div class={edu.logo.includes('Ecole_Polytechnique') ? 'bg-white p-1' : ''}>
-                    <img
-                      src={edu.logo}
-                      alt={edu.school}
-                      class={edu.logo.includes('Ecole_Polytechnique') ? 'w-12 h-12 object-contain' : 'w-16 h-16 object-contain'}
-                    />
+            <div class="liquid-glass-card">
+              <svg class="border-glow" xmlns="http://www.w3.org/2000/svg">
+                <rect class="glow-rect" pathLength="100" x="0" y="0" width="100%" height="100%" fill="none" />
+              </svg>
+              <div class="card-content">
+                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-4">
+                  {edu.logo && (
+                    <div class={edu.logo.includes('Ecole_Polytechnique') ? 'bg-white p-1' : ''}>
+                      <img
+                        src={edu.logo}
+                        alt={edu.school}
+                        class={edu.logo.includes('Ecole_Polytechnique') ? 'w-12 h-12 object-contain' : 'w-16 h-16 object-contain'}
+                      />
+                    </div>
+                  )}
+                  <div class="flex-1">
+                    <h3 class="text-lg sm:text-xl font-semibold text-white">
+                      {edu.degree}
+                    </h3>
+                    <p
+                      class="text-base sm:text-lg"
+                      style={`color: ${siteConfig.accentColor}`}
+                    >
+                      {edu.school}
+                    </p>
                   </div>
-                )}
-                <div class="flex-1">
-                  <h3 class="text-lg sm:text-xl font-semibold text-white">
-                    {edu.degree}
-                  </h3>
-                  <p
-                    class="text-base sm:text-lg"
-                    style={`color: ${siteConfig.accentColor}`}
-                  >
-                    {edu.school}
-                  </p>
+                  <span class="text-xs sm:text-sm text-gray-500 mt-2 sm:mt-0">
+                    {edu.dateRange}
+                  </span>
                 </div>
-                <span class="text-xs sm:text-sm text-gray-500 mt-2 sm:mt-0">
-                  {edu.dateRange}
-                </span>
-              </div>
 
-              <ul class="space-y-2">
-                {edu.achievements.map((achievement) => (
-                  <li>
-                    <span class="text-sm sm:text-base text-gray-400">
-                      {achievement}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+                <ul class="space-y-2">
+                  {edu.achievements.map((achievement) => (
+                    <li>
+                      <span class="text-sm sm:text-base text-gray-400">
+                        {achievement}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ))}
         </div>
@@ -56,3 +96,88 @@ const hasEducation = siteConfig.education && siteConfig.education.length > 0;
     </section>
   )
 }
+
+<style>
+  .liquid-glass-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border-radius: 0px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .liquid-glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0px;
+    pointer-events: none;
+    filter: url(#liquid-glass-filter-education);
+    z-index: 0;
+  }
+
+  .border-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .glow-rect {
+    stroke: rgba(255, 255, 255, 0.35);
+    stroke-width: 2.5;
+    stroke-dasharray: 0 400;
+    stroke-linecap: round;
+  }
+
+  .liquid-glass-card:hover .border-glow {
+    opacity: 1;
+  }
+
+  .liquid-glass-card:hover .glow-rect {
+    animation: drawBorder 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes drawBorder {
+    0% {
+      stroke-dasharray: 0 400;
+      stroke: rgba(255, 255, 255, 0.9);
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+    }
+    100% {
+      stroke-dasharray: 400 0;
+      stroke: rgba(255, 255, 255, 0.35);
+      filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+    }
+  }
+
+  .card-content {
+    position: relative;
+    z-index: 1;
+    padding: 1rem;
+  }
+
+  .liquid-glass-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  @media (min-width: 640px) {
+    .card-content {
+      padding: 1.25rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .card-content {
+      padding: 1.5rem;
+    }
+  }
+</style>

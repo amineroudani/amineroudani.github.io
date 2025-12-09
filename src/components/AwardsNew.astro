@@ -1,0 +1,222 @@
+---
+import { siteConfig } from "../config";
+---
+
+<section id="awards" class="p-8 sm:p-12 md:p-16 lg:p-24">
+  <svg style="position: absolute; width: 0; height: 0;">
+    <defs>
+      <filter id="liquid-glass-filter" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+        <feColorMatrix
+          in="blur"
+          mode="matrix"
+          values="1.2 0 0 0 0  0 1.2 0 0 0  0 0 1.2 0 0  0 0 0 1 0"
+          result="bright"
+        />
+        <feComponentTransfer in="bright" result="saturate">
+          <feFuncR type="linear" slope="1.3" />
+          <feFuncG type="linear" slope="1.3" />
+          <feFuncB type="linear" slope="1.3" />
+        </feComponentTransfer>
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.02"
+          numOctaves="3"
+          result="noise"
+          seed="2"
+        />
+        <feDisplacementMap
+          in="saturate"
+          in2="noise"
+          scale="3"
+          xChannelSelector="R"
+          yChannelSelector="G"
+          result="displace"
+        />
+        <feBlend in="SourceGraphic" in2="displace" mode="normal" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="max-w-5xl mx-auto">
+    <h2
+      class="text-3xl sm:text-4xl md:text-5xl xl:text-7xl font-bold text-white text-center mb-8 lg:mb-12"
+    >
+      Awards
+    </h2>
+
+    <div class="space-y-8">
+      {
+        siteConfig.awards.map((award) => (
+          <div class="liquid-glass-card">
+            <svg class="border-glow" xmlns="http://www.w3.org/2000/svg">
+              <rect class="glow-rect" pathLength="100" x="0" y="0" width="100%" height="100%" fill="none" />
+            </svg>
+            <div class="award-content">
+              <div class="award-header">
+                {award.logo && (
+                  <div class="award-logo-wrapper">
+                    <div class={award.logo.includes('Ecole_Polytechnique') ? 'logo-bg' : ''}>
+                      <img
+                        src={award.logo}
+                        alt={award.title}
+                        class="award-logo"
+                      />
+                    </div>
+                  </div>
+                )}
+                <div class="award-info">
+                  <h3 class="award-title">{award.title}</h3>
+                  <span class="award-date">{award.date}</span>
+                </div>
+              </div>
+              <p class="award-description" set:html={award.description} />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .liquid-glass-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border-radius: 0px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .liquid-glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0px;
+    pointer-events: none;
+    filter: url(#liquid-glass-filter);
+    z-index: 0;
+  }
+
+  .border-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .glow-rect {
+    stroke: rgba(255, 255, 255, 0.35);
+    stroke-width: 2.5;
+    stroke-dasharray: 0 400;
+    stroke-linecap: round;
+  }
+
+  .liquid-glass-card:hover .border-glow {
+    opacity: 1;
+  }
+
+  .liquid-glass-card:hover .glow-rect {
+    animation: drawBorder 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes drawBorder {
+    0% {
+      stroke-dasharray: 0 400;
+      stroke: rgba(255, 255, 255, 0.9);
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+    }
+    100% {
+      stroke-dasharray: 400 0;
+      stroke: rgba(255, 255, 255, 0.35);
+      filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+    }
+  }
+
+  .award-content {
+    position: relative;
+    z-index: 1;
+    padding: 1rem;
+  }
+
+  .liquid-glass-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .award-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .award-logo-wrapper {
+    flex-shrink: 0;
+  }
+
+  .logo-bg {
+    background: white;
+    padding: 0.25rem;
+    border-radius: 0px;
+  }
+
+  .award-logo {
+    width: 4rem;
+    height: 4rem;
+    object-fit: contain;
+    display: block;
+  }
+
+  .award-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .award-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.3;
+  }
+
+  .award-date {
+    font-size: 0.875rem;
+    color: #9ca3af;
+  }
+
+  .award-description {
+    font-size: 0.9375rem;
+    color: #d1d5db;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media (min-width: 640px) {
+    .award-content {
+      padding: 1.25rem;
+    }
+
+    .award-title {
+      font-size: 1.375rem;
+    }
+
+    .award-description {
+      font-size: 1rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .award-content {
+      padding: 1.5rem;
+    }
+  }
+</style>

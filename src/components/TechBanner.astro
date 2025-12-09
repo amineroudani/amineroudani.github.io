@@ -1,0 +1,187 @@
+---
+// Tech stack logos - using CDN URLs
+const techStack = [
+  { name: "Python", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
+  { name: "JavaScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
+  { name: "React", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
+  { name: "Node.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
+  { name: "TypeScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" },
+  { name: "Pandas", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg" },
+  { name: "Polars", icon: "https://raw.githubusercontent.com/pola-rs/polars-static/master/logos/polars-logo-dark.svg" },
+  { name: "Spark", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apachespark/apachespark-original.svg" },
+  { name: "C#", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" },
+  { name: "Snowflake", icon: "https://www.vectorlogo.zone/logos/snowflake/snowflake-icon.svg" },
+  { name: "FastAPI", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" },
+  { name: "MySQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" },
+  { name: "PostgreSQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" },
+  { name: "Docker", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" },
+  { name: "AWS", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" },
+  { name: "Git", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" },
+  { name: "Linux", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" },
+  { name: "MongoDB", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" },
+];
+---
+
+<section class="tech-banner-wrapper">
+  <div class="tech-banner" id="tech-banner">
+    <div class="tech-track" id="tech-track">
+      <!-- First set -->
+      {techStack.map((tech) => (
+        <div class="tech-item">
+          <img src={tech.icon} alt={tech.name} />
+          <span>{tech.name}</span>
+        </div>
+      ))}
+      <!-- Duplicate for seamless loop -->
+      {techStack.map((tech) => (
+        <div class="tech-item">
+          <img src={tech.icon} alt={tech.name} />
+          <span>{tech.name}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const banner = document.getElementById('tech-banner');
+  const track = document.getElementById('tech-track');
+
+  if (banner && track) {
+    let targetSpeed = 1;
+    let currentSpeed = 1;
+    let animationId: number;
+
+    const smoothTransition = () => {
+      const diff = targetSpeed - currentSpeed;
+      if (Math.abs(diff) > 0.001) {
+        currentSpeed += diff * 0.1;
+
+        const animations = track.getAnimations();
+        if (animations.length > 0) {
+          animations[0].playbackRate = currentSpeed;
+        }
+
+        animationId = requestAnimationFrame(smoothTransition);
+      }
+    };
+
+    banner.addEventListener('mouseenter', () => {
+      targetSpeed = 0.25;
+      cancelAnimationFrame(animationId);
+      smoothTransition();
+    });
+
+    banner.addEventListener('mouseleave', () => {
+      targetSpeed = 1;
+      cancelAnimationFrame(animationId);
+      smoothTransition();
+    });
+  }
+</script>
+
+<style>
+  .tech-banner-wrapper {
+    width: 100%;
+    overflow: hidden;
+    padding: 2rem 0;
+    position: relative;
+  }
+
+  .tech-banner-wrapper::before,
+  .tech-banner-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 150px;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .tech-banner-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, rgb(0, 0, 0) 0%, transparent 100%);
+  }
+
+  .tech-banner-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, rgb(0, 0, 0) 0%, transparent 100%);
+  }
+
+  .tech-banner {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .tech-track {
+    display: flex;
+    gap: 4rem;
+    width: fit-content;
+    will-change: transform;
+    animation: scroll 30s linear infinite;
+  }
+
+  .tech-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 100px;
+    flex-shrink: 0;
+  }
+
+  .tech-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    filter: grayscale(0.3) opacity(0.8);
+    transition: filter 0.3s ease;
+  }
+
+  .tech-banner:hover .tech-item:hover img {
+    filter: grayscale(0) opacity(1);
+  }
+
+  .tech-item span {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+    text-align: center;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .tech-item {
+      min-width: 80px;
+      gap: 0.5rem;
+    }
+
+    .tech-item img {
+      width: 48px;
+      height: 48px;
+    }
+
+    .tech-item span {
+      font-size: 0.75rem;
+    }
+
+    .tech-track {
+      gap: 3rem;
+    }
+
+    .tech-banner-wrapper::before,
+    .tech-banner-wrapper::after {
+      width: 100px;
+    }
+  }
+</style>

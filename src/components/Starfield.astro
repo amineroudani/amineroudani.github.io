@@ -6,27 +6,28 @@
 <script is:inline>
   document.addEventListener('DOMContentLoaded', function() {
     const starfield = document.getElementById("starfield");
-    const numStars = 100;
+    const numStars = 120;
+    const stars = [];
 
     // Create static stars
     for (let i = 0; i < numStars; i++) {
       const star = document.createElement("div");
-      
+
       // Random position
       const x = Math.random() * 100;
       const y = Math.random() * 100;
 
-      // Small discrete stars (1-2px)
-      const size = Math.random() * 1 + 1;
+      // Small discrete stars (1-2px for more variety)
+      const size = Math.random() * 1.5 + 1;
 
-      // Random opacity (0.3-0.6 for subtle effect)
-      const opacity = Math.random() * 0.3 + 0.3;
+      // Random opacity (0.3-0.7 for more range)
+      const opacity = Math.random() * 0.4 + 0.3;
 
-      // Random animation duration for twinkling (3-8 seconds)
-      const twinkleDuration = Math.random() * 5 + 3;
+      // Random animation duration for twinkling (2-5 seconds)
+      const twinkleDuration = Math.random() * 3 + 2;
 
       // Random animation delay
-      const twinkleDelay = Math.random() * 5;
+      const twinkleDelay = Math.random() * 4;
 
       // Random float animation (10-30 seconds for slow drift)
       const floatDuration = Math.random() * 20 + 10;
@@ -42,15 +43,49 @@
         background: white;
         border-radius: 50%;
         pointer-events: none;
-        box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+        box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
         z-index: 10;
         opacity: ${opacity};
         animation: twinkle ${twinkleDuration}s ease-in-out infinite ${twinkleDelay}s,
                    float ${floatDuration}s ease-in-out infinite ${floatDelay}s;
+        transition: all 0.3s ease;
       `;
 
+      star.dataset.baseOpacity = opacity;
+      stars.push(star);
       starfield?.appendChild(star);
     }
+
+    // Random star glow effect
+    function makeStarGlow() {
+      // Pick a random star
+      const randomStar = stars[Math.floor(Math.random() * stars.length)];
+      const baseOpacity = parseFloat(randomStar.dataset.baseOpacity);
+
+      // Make it glow brighter
+      randomStar.style.opacity = '1';
+      randomStar.style.boxShadow = '0 0 8px rgba(255, 255, 255, 0.8), 0 0 12px rgba(255, 255, 255, 0.5)';
+      randomStar.style.transform = 'scale(1.5)';
+
+      // Return to normal after 0.5-1 second
+      const glowDuration = Math.random() * 500 + 500;
+      setTimeout(() => {
+        randomStar.style.opacity = baseOpacity;
+        randomStar.style.boxShadow = '0 0 2px rgba(255, 255, 255, 0.3)';
+        randomStar.style.transform = 'scale(1)';
+      }, glowDuration);
+    }
+
+    // Schedule random glows
+    function scheduleNextGlow() {
+      const delay = Math.random() * 2000 + 1000; // 1-3 seconds between glows
+      setTimeout(() => {
+        makeStarGlow();
+        scheduleNextGlow();
+      }, delay);
+    }
+
+    scheduleNextGlow();
 
     // Shooting stars function
     function createShootingStar() {
@@ -113,6 +148,11 @@
       }, duration * 1000);
     }
 
+    // Hardcoded shooting star on page load
+    setTimeout(() => {
+      createShootingStar();
+    }, 200); // 0.2 seconds after page load
+
     // Schedule shooting stars at random intervals (3-8 seconds)
     function scheduleNextShootingStar() {
       const delay = Math.random() * 5000 + 3000; // 3000-8000ms (3-8 seconds)
@@ -124,6 +164,138 @@
 
     // Start the shooting star cycle
     scheduleNextShootingStar();
+
+    // UFO easter egg - starting VERY visible then we'll make it subtle
+    function createUFO() {
+      const ufo = document.createElement("div");
+
+      // Random starting position from left or right edge
+      const fromLeft = Math.random() > 0.5;
+      const startX = fromLeft ? -5 : 105;
+      const endX = fromLeft ? 105 : -5;
+      const startY = Math.random() * 70 + 10; // 10-80% from top
+      const endY = Math.random() * 70 + 10; // Different end height
+
+      // Create subtle curved path
+      const curveType = Math.random();
+      let midY1, midY2;
+
+      if (curveType < 0.5) {
+        // Gentle arc
+        const curveAmount = Math.random() * 15 + 8; // 8-23% vertical movement
+        const curveDirection = Math.random() > 0.5 ? 1 : -1;
+        midY1 = startY + (curveAmount * curveDirection);
+        midY2 = (startY + endY) / 2 + (curveAmount * curveDirection * 0.5);
+      } else {
+        // Subtle S-curve
+        const curve1 = (Math.random() * 12 + 5) * (Math.random() > 0.5 ? 1 : -1);
+        const curve2 = curve1 * -0.6;
+        midY1 = startY + curve1;
+        midY2 = endY + curve2;
+      }
+
+      const duration = Math.random() * 4 + 6; // 6-10 seconds (more variety)
+
+      // Multiple random flicker/fade events - brief appearances
+      const numFlickers = Math.floor(Math.random() * 2) + 2; // 2-3 brief appearances
+      const flickerAnimations = ['ufoInvisible ' + duration + 's linear forwards']; // Base invisible state
+
+      for (let i = 0; i < numFlickers; i++) {
+        const flickerDuration = Math.random() * 1 + 0.8; // 0.8-1.8 seconds each (shorter)
+        const flickerDelay = (duration / (numFlickers + 1)) * (i + 1) + (Math.random() * 1 - 0.5); // Spread out with randomness
+        flickerAnimations.push(`ufoFlicker ${flickerDuration}s ease-in-out ${flickerDelay}s 1`);
+      }
+
+      ufo.className = "ufo";
+      ufo.style.cssText = `
+        position: absolute;
+        left: ${startX}%;
+        top: ${startY}%;
+        width: 60px;
+        height: 30px;
+        pointer-events: none;
+        z-index: 20;
+        animation:
+          ufoFloatX ${duration}s linear forwards,
+          ufoFloatY ${duration}s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards,
+          ${flickerAnimations.join(', ')};
+        --endX: ${endX}%;
+        --startX: ${startX}%;
+        --startY: ${startY}%;
+        --midY1: ${midY1}%;
+        --midY2: ${midY2}%;
+        --endY: ${endY}%;
+      `;
+
+      // UFO structure - sleek military metallic design
+      ufo.innerHTML = `
+        <div style="position: relative; width: 100%; height: 100%;">
+          <!-- Main body - brushed metallic silver -->
+          <div style="position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 60px; height: 10px; background: linear-gradient(135deg, rgba(140, 150, 160, 0.85) 0%, rgba(100, 110, 120, 0.75) 50%, rgba(80, 90, 100, 0.7) 100%); border-radius: 50%; box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(255, 255, 255, 0.2);"></div>
+          <!-- Top dome - darker metallic -->
+          <div style="position: absolute; top: 3px; left: 50%; transform: translateX(-50%); width: 24px; height: 8px; background: linear-gradient(180deg, rgba(90, 100, 110, 0.7) 0%, rgba(70, 80, 90, 0.6) 100%); border-radius: 50% 50% 45% 45%; box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.4);"></div>
+          <!-- Edge highlight -->
+          <div style="position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 56px; height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(160, 170, 180, 0.4) 50%, transparent 100%);"></div>
+          <!-- Engine ports with glow -->
+          <div style="position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%); width: 16px; height: 4px; background: rgba(200, 220, 255, 0.6); border-radius: 50%; box-shadow: 0 0 8px rgba(200, 220, 255, 0.7), 0 0 12px rgba(180, 200, 240, 0.3);"></div>
+        </div>
+      `;
+
+      starfield?.appendChild(ufo);
+
+      // Create exhaust trail particles as it moves
+      let trailInterval = setInterval(() => {
+        if (!document.contains(ufo)) {
+          clearInterval(trailInterval);
+          return;
+        }
+
+        const rect = ufo.getBoundingClientRect();
+        // Get current UFO opacity
+        const ufoOpacity = parseFloat(window.getComputedStyle(ufo).opacity);
+
+        const trail = document.createElement('div');
+        // Position trail behind based on direction
+        const trailX = fromLeft ? rect.left - 30 : rect.right - 50;
+        trail.style.cssText = `
+          position: fixed;
+          left: ${trailX}px;
+          top: ${rect.top + 10}px;
+          width: 80px;
+          height: 2px;
+          background: linear-gradient(${fromLeft ? '-90deg' : '90deg'}, rgba(200, 220, 255, ${0.7 * ufoOpacity}) 0%, rgba(180, 200, 240, ${0.4 * ufoOpacity}) 30%, transparent 100%);
+          box-shadow: 0 0 6px 1px rgba(180, 200, 240, ${0.3 * ufoOpacity});
+          filter: blur(0.5px);
+          pointer-events: none;
+          z-index: 19;
+          animation: trailFade 0.6s ease-out forwards;
+        `;
+        document.body.appendChild(trail);
+
+        setTimeout(() => trail.remove(), 600);
+      }, 50);
+
+      // Remove after animation completes
+      setTimeout(() => {
+        clearInterval(trailInterval);
+        ufo.remove();
+      }, duration * 1000);
+    }
+
+    // Create UFO rarely - easter egg
+    function scheduleNextUFO() {
+      const delay = Math.random() * 60000 + 30000; // 30-90 seconds between UFOs
+      setTimeout(() => {
+        createUFO();
+        scheduleNextUFO();
+      }, delay);
+    }
+
+    // Start the UFO cycle after initial delay
+    setTimeout(() => {
+      createUFO(); // First one after 5 seconds
+      scheduleNextUFO();
+    }, 5000); // After 5 seconds
   });
 </script>
 
@@ -143,11 +315,11 @@
   @keyframes twinkle {
     0%,
     100% {
-      opacity: 0.4;
-      transform: scale(1);
+      opacity: 0.3;
+      transform: scale(0.9);
     }
     50% {
-      opacity: 0.8;
+      opacity: 0.9;
       transform: scale(1.2);
     }
   }
@@ -190,6 +362,81 @@
   .shooting-star {
     box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.6);
     filter: blur(0.5px);
+  }
+
+  .ufo {
+    opacity: 1;
+  }
+
+  @keyframes ufoInvisible {
+    0%, 100% {
+      opacity: 0.05;
+    }
+  }
+
+  @keyframes ufoFloatX {
+    0% {
+      left: var(--startX);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      left: var(--endX);
+      opacity: 0;
+    }
+  }
+
+  @keyframes ufoFloatY {
+    0% {
+      top: var(--startY);
+    }
+    33% {
+      top: var(--midY1);
+    }
+    66% {
+      top: var(--midY2);
+    }
+    100% {
+      top: var(--endY);
+    }
+  }
+
+  @keyframes trailFade {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes ufoFlicker {
+    0% {
+      opacity: 0.05;
+    }
+    20% {
+      opacity: 0.3;
+    }
+    40% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 0.6;
+    }
+    60% {
+      opacity: 0.4;
+    }
+    80% {
+      opacity: 0.2;
+    }
+    100% {
+      opacity: 0.05;
+    }
   }
 </style>
 

@@ -6,6 +6,41 @@ const hasProjects = siteConfig.projects && siteConfig.projects.length > 0;
 {
   hasProjects && (
     <section id="projects" class="p-8 sm:p-12 md:p-16 lg:p-24">
+      <svg style="position: absolute; width: 0; height: 0;">
+        <defs>
+          <filter id="liquid-glass-filter-projects" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1.2 0 0 0 0  0 1.2 0 0 0  0 0 1.2 0 0  0 0 0 1 0"
+              result="bright"
+            />
+            <feComponentTransfer in="bright" result="saturate">
+              <feFuncR type="linear" slope="1.3" />
+              <feFuncG type="linear" slope="1.3" />
+              <feFuncB type="linear" slope="1.3" />
+            </feComponentTransfer>
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.02"
+              numOctaves="3"
+              result="noise"
+              seed="2"
+            />
+            <feDisplacementMap
+              in="saturate"
+              in2="noise"
+              scale="3"
+              xChannelSelector="R"
+              yChannelSelector="G"
+              result="displace"
+            />
+            <feBlend in="SourceGraphic" in2="displace" mode="normal" />
+          </filter>
+        </defs>
+      </svg>
+
       <div class="max-w-5xl mx-auto">
         <h2 class="text-3xl sm:text-4xl md:text-5xl xl:text-7xl font-bold text-white text-center mb-8 lg:mb-12">
           Projects
@@ -24,66 +59,74 @@ const hasProjects = siteConfig.projects && siteConfig.projects.length > 0;
 
             return (
               <div class="group relative">
+                <div class="liquid-glass-card">
+                  <svg class="border-glow" xmlns="http://www.w3.org/2000/svg">
+                    <rect class="glow-rect" pathLength="100" x="0" y="0" width="100%" height="100%" fill="none" />
+                  </svg>
                   <Component
-                  {...linkProps}
-                  class={`block relative p-4 sm:p-6 md:p-8 bg-neutral-900/70 backdrop-blur-md transition-all duration-300 ${
-                    project.link
-                      ? "hover:bg-neutral-900/80 hover:shadow-xl hover:-translate-y-1"
-                      : ""
-                  }`}
-                >
-                      {project.link && (
-                        <div class="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center bg-neutral-900/70 backdrop-blur-md text-white transition-all duration-300 group-hover:bg-neutral-900/80">
-                      <svg
-                        class="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M7 17L17 7M17 7H7M17 7V17"
-                        />
-                      </svg>
-                    </div>
-                  )}
+                    {...linkProps}
+                    class={`card-content block ${
+                      project.link ? "cursor-pointer" : ""
+                    }`}
+                  >
+                    {project.link && (
+                      <div class="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-neutral-900/70 backdrop-blur-md text-white transition-all duration-300 group-hover:bg-neutral-900/80">
+                        <svg
+                          class="w-4 h-4 sm:w-4.5 sm:h-4.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M7 17L17 7M17 7H7M17 7V17"
+                          />
+                        </svg>
+                      </div>
+                    )}
 
-                  <div class="space-y-4">
-                    <div>
-                      <span
-                        class="text-sm font-mono"
-                        style={{ color: siteConfig.accentColor }}
-                      >
-                        0{index + 1}
-                      </span>
-                      <h3 class="text-xl sm:text-2xl font-bold text-white mt-1">
-                        {project.name}
-                      </h3>
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-4">
+                      {project.logo && (
+                        <div class={(project.logo.includes('aq.png') || project.logo.includes('ask2.png')) ? 'bg-white p-0.5 flex-shrink-0 w-16 h-16 flex items-center justify-center' : 'flex-shrink-0 w-16 h-16 flex items-center justify-center'}>
+                          <img
+                            src={project.logo}
+                            alt={project.name}
+                            class="w-full h-full object-contain"
+                          />
+                        </div>
+                      )}
+                      <div class="flex-1">
+                        <h3 class="text-lg sm:text-xl font-semibold text-white">
+                          {project.name}
+                        </h3>
+                        <p
+                          class="text-base sm:text-lg"
+                          style={`color: ${siteConfig.accentColor}`}
+                          set:html={project.supervisor}
+                        />
+                      </div>
                     </div>
 
                     <p
-                      class={`text-base sm:text-lg text-gray-400 leading-relaxed ${project.link ? "pr-12 sm:pr-14 md:pr-16" : ""}`}
-                    >
-                      {project.description}
-                    </p>
+                      class="text-sm sm:text-base text-gray-400 leading-relaxed mb-4"
+                      set:html={project.description}
+                    />
 
                     {project.skills && project.skills.length > 0 && (
-                      <div class="flex flex-wrap gap-1.5 sm:gap-2 pt-2">
-                            {project.skills.map((skill) => (
-                              <span
-                                class={`px-2.5 sm:px-3 py-1 sm:py-1.5 bg-neutral-900/70 backdrop-blur-md text-white text-xs sm:text-sm font-medium transition-all duration-300 ${
-                                  project.link ? "group-hover:bg-neutral-900/80" : ""
-                                }`}
-                              >
-                                {skill}
-                              </span>
-                            ))}
+                      <div class="flex flex-wrap gap-1.5 sm:gap-2">
+                        {project.skills.map((skill) => (
+                          <span
+                            class="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-neutral-900/70 backdrop-blur-md text-white text-xs sm:text-sm font-medium transition-all duration-300 hover:bg-white/20 cursor-default"
+                          >
+                            {skill}
+                          </span>
+                        ))}
                       </div>
                     )}
-                  </div>
-                </Component>
+                  </Component>
+                </div>
               </div>
             );
           })}
@@ -92,3 +135,88 @@ const hasProjects = siteConfig.projects && siteConfig.projects.length > 0;
     </section>
   )
 }
+
+<style>
+  .liquid-glass-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border-radius: 0px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .liquid-glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0px;
+    pointer-events: none;
+    filter: url(#liquid-glass-filter-projects);
+    z-index: 0;
+  }
+
+  .border-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .glow-rect {
+    stroke: rgba(255, 255, 255, 0.35);
+    stroke-width: 2.5;
+    stroke-dasharray: 0 400;
+    stroke-linecap: round;
+  }
+
+  .liquid-glass-card:hover .border-glow {
+    opacity: 1;
+  }
+
+  .liquid-glass-card:hover .glow-rect {
+    animation: drawBorder 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes drawBorder {
+    0% {
+      stroke-dasharray: 0 400;
+      stroke: rgba(255, 255, 255, 0.9);
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+    }
+    100% {
+      stroke-dasharray: 400 0;
+      stroke: rgba(255, 255, 255, 0.35);
+      filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+    }
+  }
+
+  .card-content {
+    position: relative;
+    z-index: 3;
+    padding: 1rem;
+  }
+
+  .liquid-glass-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  @media (min-width: 640px) {
+    .card-content {
+      padding: 1.25rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .card-content {
+      padding: 1.5rem;
+    }
+  }
+</style>

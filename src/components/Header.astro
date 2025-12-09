@@ -4,6 +4,7 @@ import { siteConfig } from "../config";
 const hasProjects = siteConfig.projects && siteConfig.projects.length > 0;
 const hasExperience = siteConfig.experience && siteConfig.experience.length > 0;
 const hasEducation = siteConfig.education && siteConfig.education.length > 0;
+const hasAwards = siteConfig.awards && siteConfig.awards.length > 0;
 ---
 
 <header
@@ -21,13 +22,25 @@ const hasEducation = siteConfig.education && siteConfig.education.length > 0;
         </a>
       </li>
       {
-        hasProjects && (
+        hasAwards && (
           <li>
             <a
-              href="#projects"
+              href="#awards"
               class="text-gray-300 hover:text-white transition-colors font-medium"
             >
-              Projects
+              Awards
+            </a>
+          </li>
+        )
+      }
+      {
+        hasEducation && (
+          <li>
+            <a
+              href="#education"
+              class="text-gray-300 hover:text-white transition-colors font-medium"
+            >
+              Education
             </a>
           </li>
         )
@@ -45,13 +58,13 @@ const hasEducation = siteConfig.education && siteConfig.education.length > 0;
         )
       }
       {
-        hasEducation && (
+        hasProjects && (
           <li>
             <a
-              href="#education"
+              href="#projects"
               class="text-gray-300 hover:text-white transition-colors font-medium"
             >
-              Education
+              Projects
             </a>
           </li>
         )
