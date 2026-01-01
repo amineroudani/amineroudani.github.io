@@ -11,8 +11,7 @@ import { siteConfig } from "../config";
     </h2>
 
     <div class="space-y-8">
-      <p class="text-lg sm:text-xl md:text-2xl leading-relaxed text-gray-400 text-center">
-        {siteConfig.aboutMe}
+      <p class="text-lg sm:text-xl md:text-2xl leading-relaxed text-gray-400 text-left" set:html={siteConfig.aboutMe}>
       </p>
 
       <div class="pt-4">

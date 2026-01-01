@@ -47,8 +47,18 @@ const hasExperience = siteConfig.experience && siteConfig.experience.length > 0;
         </h2>
 
         <div class="relative">
-          {siteConfig.experience.map((exp, index) => (
-            <div class="relative mb-12 last:mb-0">
+          {siteConfig.experience.map((exp, index) => {
+            const Component = exp.link ? "a" : "div";
+            const linkProps = exp.link
+              ? {
+                  href: exp.link,
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                }
+              : {};
+
+            return (
+            <div class="relative mb-12 last:mb-0 group">
               {/* Timeline dot at top of card */}
               <div
                 class="absolute left-1/2 -top-2 w-4 h-4 bg-black border-2 rounded-full -translate-x-1/2 z-20 transition-all duration-300"
@@ -65,14 +75,36 @@ const hasExperience = siteConfig.experience && siteConfig.experience.length > 0;
                 <svg class="border-glow" xmlns="http://www.w3.org/2000/svg">
                   <rect class="glow-rect" pathLength="100" x="0" y="0" width="100%" height="100%" fill="none" />
                 </svg>
-                <div class="card-content">
+                <Component
+                  {...linkProps}
+                  class={`card-content block ${
+                    exp.link ? "cursor-pointer" : ""
+                  }`}
+                >
+                  {exp.link && (
+                    <div class="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-neutral-900/70 backdrop-blur-md text-white transition-all duration-300 group-hover:bg-neutral-900/80">
+                      <svg
+                        class="w-4 h-4 sm:w-4.5 sm:h-4.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M7 17L17 7M17 7H7M17 7V17"
+                        />
+                      </svg>
+                    </div>
+                  )}
                   <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-4">
                     {exp.logo && (
-                      <div class={(exp.logo.includes('aq.png') || exp.logo.includes('ask2.png')) ? 'bg-white p-0.5 flex-shrink-0 w-16 h-16 flex items-center justify-center' : exp.logo.includes('Ecole_Polytechnique') ? 'bg-white p-1' : ''}>
+                      <div class={(exp.logo.includes('aq.png') || exp.logo.includes('ask2.png')) ? 'bg-white p-0.5 flex-shrink-0 w-16 h-16 flex items-center justify-center' : exp.logo.includes('Ecole_Polytechnique') ? 'bg-white p-1 flex-shrink-0 w-16 h-16 flex items-center justify-center' : 'flex-shrink-0 w-16 h-16 flex items-center justify-center'}>
                         <img
                           src={exp.logo}
                           alt={exp.company}
-                          class={(exp.logo.includes('aq.png') || exp.logo.includes('ask2.png')) ? 'w-full h-full object-contain' : exp.logo.includes('Ecole_Polytechnique') ? 'w-12 h-12 object-contain' : 'w-16 h-16 object-contain'}
+                          class="w-full h-full object-contain"
                         />
                       </div>
                     )}
@@ -101,10 +133,11 @@ const hasExperience = siteConfig.experience && siteConfig.experience.length > 0;
                       </li>
                     ))}
                   </ul>
-                </div>
+                </Component>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

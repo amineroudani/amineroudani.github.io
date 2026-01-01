@@ -56,11 +56,11 @@ import { siteConfig } from "../config";
               <div class="award-header">
                 {award.logo && (
                   <div class="award-logo-wrapper">
-                    <div class={award.logo.includes('Ecole_Polytechnique') ? 'logo-bg' : ''}>
+                    <div class={(award.logo.includes('Ecole_Polytechnique') || award.logo.includes('imo.png')) ? 'logo-bg' : ''}>
                       <img
                         src={award.logo}
                         alt={award.title}
-                        class="award-logo"
+                        class={award.logo.includes('imo.png') ? 'award-logo imo-logo' : 'award-logo'}
                       />
                     </div>
                   </div>
@@ -160,19 +160,34 @@ import { siteConfig } from "../config";
 
   .award-logo-wrapper {
     flex-shrink: 0;
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .logo-bg {
     background: white;
     padding: 0.25rem;
     border-radius: 0px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .award-logo {
-    width: 4rem;
-    height: 4rem;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     display: block;
+  }
+
+  .imo-logo {
+    object-position: 60% center;
+    transform: scale(1.15);
   }
 
   .award-info {

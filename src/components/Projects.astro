@@ -57,8 +57,14 @@ const hasProjects = siteConfig.projects && siteConfig.projects.length > 0;
                 }
               : {};
 
+            // Create a slug from the project name for the ID
+            const projectId = project.name
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-|-$/g, '');
+
             return (
-              <div class="group relative">
+              <div id={`project-${projectId}`} class="group relative scroll-mt-24">
                 <div class="liquid-glass-card">
                   <svg class="border-glow" xmlns="http://www.w3.org/2000/svg">
                     <rect class="glow-rect" pathLength="100" x="0" y="0" width="100%" height="100%" fill="none" />
